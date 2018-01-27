@@ -5,13 +5,80 @@ function Pencil(ctx, drawing, canvas) {
 	this.currEditingMode = editingMode.line;
 	this.currLineWidth = 5;
 	this.currColour = '#000000';
-	this.currentShape = 0;
+	this.currentShape = null;
+	this.canvas = canvas;
+	this.drawing = drawing;
+	this.ctx = ctx;
 
-	// Liez ici les widgets à la classe pour modifier les attributs présents ci-dessus.
+	document.getElementById("butRect").addEventListener("click", function(evt) {
+		this.currEditingMode = editingMode.rect;
+	}.bind(this));
 
-	new DnD(canvas, this);
+	document.getElementById("butLine").addEventListener("click", function(evt) {
+		this.currEditingMode = editingMode.line;
+	}.bind(this));
 
-	// Implémentez ici les 3 fonctions onInteractionStart, onInteractionUpdate et onInteractionEnd
+	document.getElementById("spinnerWidth").addEventListener("input", function(evt) {
+		this.currLineWidth = document.getElementById("spinnerWidth").value;
+	}.bind(this));
+
+	document.getElementById("colour").addEventListener("change", function(evt) {
+		this.currColour = document.getElementById("colour").value;
+	}.bind(this));
+
+	new DnD(this.canvas, this);
+
+	this.onInteractionStart = function(dnd) {
+		switch (this.currEditingMode) {
+			case editingMode.rect:
+				this.currentShape = new Rectangle(this.currColour, this.currLineWidth, dnd.xStart, dnd.yStart, 0, 0);
+				break;
+			case editingMode.line:
+				this.currentShape = new Line(this.currColour, this.currLineWidth, dnd.xStart, dnd.yStart, dnd.xEnd, dnd.yEnd);
+				break;
+			default:
+				break;
+		}
+
+		this.drawing.paint(this.ctx);
+	}.bind(this);
+
+	this.onInteractionUpdate = function(dnd) {
+		var xStart = dnd.xStart, yStart = dnd.yStart, xEnd = dnd.xEnd, yEnd = dnd.yEnd;
+
+		switch (this.currEditingMode) {
+			case editingMode.rect:
+				if (xStart <= xEnd) {
+					this.currentShape.width = xEnd - xStart;
+				} else {
+					this.currentShape.topLeft.x = xEnd;
+					this.currentShape.width = xStart - xEnd;
+				}
+
+				if (yStart <= yEnd) {
+					this.currentShape.height = yEnd - yStart;
+				} else {
+					this.currentShape.topLeft.y = yEnd;
+					this.currentShape.height = yStart - yEnd;
+				}
+				break;
+			case editingMode.line:
+				this.currentShape.end = {
+					x : xEnd,
+					y : yEnd
+				};
+				break;
+			default:
+				break;
+		}
+
+		this.drawing.paint(this.ctx);
+		this.currentShape.paint(this.ctx);
+	}.bind(this);
+
+	this.onInteractionEnd = function(dnd) {
+		this.drawing.addShape(this.currentShape);
+		this.currentShape = null;
+		this.drawing.paint(this.ctx);
+	}.bind(this);
 };
-
-
