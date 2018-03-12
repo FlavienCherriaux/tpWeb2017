@@ -3,8 +3,8 @@ var editingMode = { rect: 0, line: 1 };
 
 function Pencil(ctx, drawing, canvas) {
 	this.currEditingMode = editingMode.line;
-	this.currLineWidth = 5;
-	this.currColour = '#000000';
+	this.currLineWidth = document.getElementById("spinnerWidth").value;
+	this.currColour = document.getElementById("colour").value;
 	this.currentShape = null;
 	this.canvas = canvas;
 	this.drawing = drawing;
@@ -77,8 +77,10 @@ function Pencil(ctx, drawing, canvas) {
 	}.bind(this);
 
 	this.onInteractionEnd = function(dnd) {
-		this.drawing.addShape(this.currentShape);
+		var newShape = this.currentShape;
+		var index = this.drawing.addShape(newShape);
 		this.currentShape = null;
 		this.drawing.paint(this.ctx);
+		updateShapeList(newShape, index);
 	}.bind(this);
 };
