@@ -14,14 +14,13 @@ function Drawing() {
     this.removeShape = function(shape) {
         // On ne supprime pas complètement l'élément du tableau
         // pour garder la correspondance entre l'index des formes encore existantes et leur position dans le tableau
-        this.shapes[this.shapes.indexOf(shape)] = null;
+        delete this.shapes[this.shapes.indexOf(shape)];
     }.bind(this);
 
     this.removeShapeByIndex = function(index) {
         // On ne supprime pas complètement l'élément du tableau
         // pour garder la correspondance entre l'index des formes encore existantes et leur position dans le tableau
         delete this.shapes[index - 1];
-        console.log(this.shapes);
     }.bind(this);
 }
 
