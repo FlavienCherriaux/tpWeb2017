@@ -24,6 +24,14 @@ var drawing = new Drawing();
 var pencil = new Pencil(ctx, drawing, canvas);
 drawing.paint(ctx, canvas);
 
+function updateShapeList(shape, index) {
+    var newListItem = document.createElement("li");
+    newListItem.classList.add("list-group-item");
+    newListItem.style.color = shape.getColor();
+    newListItem.innerHTML = '<button type="button" class="btn btn-default" onclick="removeShape(' + index + ', this.parentNode);"><span class="glyphicon glyphicon-remove-sign"></span></button> Shape ' + index + ' (' + shape.constructor.name + ')';
+    document.getElementById("shapeList").append(newListItem);
+}
+
 function removeShape(index, listitem) {
     drawing.removeShapeByIndex(index);
     drawing.paint(ctx, canvas);
